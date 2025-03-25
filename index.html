@@ -73,11 +73,186 @@
             height: 100%;
             border: none;
         }
+        .developer-section {
+            max-width: 1000px;
+            margin: 0 auto 40px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        .developer-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: linear-gradient(180deg, #4f46e5, #7c3aed);
+        }
+        .developer-section h2 {
+            color: #333;
+            margin-bottom: 24px;
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            position: relative;
+            padding-bottom: 12px;
+        }
+        .developer-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            border-radius: 3px;
+        }
+        .developer-section h3 {
+            color: #333;
+            margin: 28px 0 16px 0;
+            font-size: 22px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        .developer-section h3::before {
+            content: '●';
+            color: #7c3aed;
+            margin-right: 10px;
+            font-size: 12px;
+        }
+        .developer-section p, .developer-section li {
+            color: #4b5563;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+        .developer-section a {
+            color: #4f46e5;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .developer-section a:hover {
+            color: #7c3aed;
+            text-decoration: underline;
+        }
+        .developer-section ul {
+            list-style-type: none;
+            margin-left: 0;
+            padding-left: 0;
+        }
+        .developer-section li {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 10px;
+        }
+        .developer-section li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #7c3aed;
+        }
+        .section-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+        .section-card {
+            background-color: #f9fafb;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s ease;
+        }
+        .section-card:hover {
+            transform: translateY(-5px);
+        }
+        @media (max-width: 768px) {
+            .section-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .skill-tag {
+            background-color: #eef2ff;
+            color: #4f46e5;
+            border-radius: 20px;
+            padding: 5px 12px;
+            font-size: 14px;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body class="p-4">
     <h1 class="text-3xl font-bold text-center my-6">Sanicle FemTech App Prototype</h1>
     <p class="text-center mb-8 max-w-3xl mx-auto">A mobile application for workplace female health management featuring period tracking, menopause support, health data visualization, company health policies, and AI health assistant.</p>
+    
+    <div class="developer-section">
+        <h2>Chan Meng - Professional Developer</h2>
+        
+        <div class="section-grid">
+            <div class="section-card">
+                <h3>Website Development</h3>
+                <p>I can optimize the existing Sanicle.cloud website (<a href="https://sanicle.cloud/" target="_blank">https://sanicle.cloud/</a>) and continue developing the Sanicle AI project (<a href="https://sanicle-ai.vercel.app/login" target="_blank">https://sanicle-ai.vercel.app/login</a>) with integration into the Sanicle.cloud website.</p>
+                <div class="skills-list">
+                    <span class="skill-tag">Web Optimization</span>
+                    <span class="skill-tag">Integration</span>
+                    <span class="skill-tag">Full-Stack</span>
+                </div>
+            </div>
+            
+            <div class="section-card">
+                <h3>Mobile App Development</h3>
+                <p>I have experience developing Android applications as demonstrated by my previous projects:</p>
+                <ul>
+                    <li><strong>CORDE Mobile</strong>: <a href="https://corde-mobile-application-4yw7mtt.gamma.site/" target="_blank">https://corde-mobile-application-4yw7mtt.gamma.site/</a></li>
+                    <li><strong>FemTracker</strong>: <a href="https://github.com/ChanMeng666/femtracker" target="_blank">https://github.com/ChanMeng666/femtracker</a></li>
+                </ul>
+                <p>I can develop the Sanicle mobile app and design its UI/UX as demonstrated in this prototype: <a href="https://chanmeng666.github.io/sanicle-ai-mobile/" target="_blank">https://chanmeng666.github.io/sanicle-ai-mobile/</a></p>
+                <div class="skills-list">
+                    <span class="skill-tag">Android</span>
+                    <span class="skill-tag">UI/UX Design</span>
+                    <span class="skill-tag">Mobile Development</span>
+                </div>
+            </div>
+            
+            <div class="section-card">
+                <h3>Vision for Sanicle AI</h3>
+                <p>My blueprint for Sanicle AI includes:</p>
+                <ul>
+                    <li>Building an AI agent concept</li>
+                    <li>Implementing RAG (Retrieval-Augmented Generation) technology for enhanced chat with vector database functionality</li>
+                    <li>Enabling users to directly chat with the database</li>
+                </ul>
+                <div class="skills-list">
+                    <span class="skill-tag">AI Agent</span>
+                    <span class="skill-tag">RAG</span>
+                    <span class="skill-tag">Vector DB</span>
+                </div>
+            </div>
+            
+            <div class="section-card">
+                <h3>Desired Position</h3>
+                <p>I'm seeking a position as an <strong>AI Software Engineer</strong> at Sanicle, though I'm open to various employment arrangements including full-time, contract, or part-time work.</p>
+                <div class="skills-list">
+                    <span class="skill-tag">AI Engineering</span>
+                    <span class="skill-tag">Flexible Work</span>
+                    <span class="skill-tag">Problem Solving</span>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <div class="screens-grid">
         <!-- Employee Dashboard -->
