@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanicle - Employee Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../css/sanicle-ui.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            color: #333;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .status-bar {
+            height: 44px;
+            background-color: #000;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 22px;
+            font-size: 14px;
+        }
+        
+        .nav-bar {
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        
+        .tab-bar {
+            height: 70px;
+            background-color: #fff;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 10px;
+            color: #888;
+        }
+        
+        .tab-item.active {
+            color: #FF5F85;
+        }
+        
+        .tab-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+        
+        .primary-color {
+            color: #FF5F85;
+        }
+        
+        .primary-bg {
+            background-color: #FF5F85;
+        }
+        
+        .secondary-color {
+            color: #6B7280;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .cycle-progress {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .cycle-day {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .cycle-label {
+            position: absolute;
+            top: 65%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 14px;
+            color: var(--muted-foreground);
+        }
+
+        .health-metric {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .health-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 18px;
+            color: white;
+        }
+
+        .health-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .health-label {
+            font-size: 12px;
+            color: #6B7280;
+        }
+
+        .recommendation-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .recommendation-icon {
+            margin-right: 16px;
+            font-size: 22px;
+        }
+
+        .recommendation-title {
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .recommendation-desc {
+            font-size: 13px;
+            color: var(--muted-foreground);
+        }
+
+        .recommendation-hydration {
+            background-color: var(--info-bg);
+        }
+        
+        .recommendation-hydration .recommendation-icon {
+            color: var(--info);
+        }
+        
+        .recommendation-nutrition {
+            background-color: var(--success-bg);
+        }
+        
+        .recommendation-nutrition .recommendation-icon {
+            color: var(--success);
+        }
+        
+        .recommendation-wellness {
+            background-color: var(--primary-bg);
+        }
+        
+        .recommendation-wellness .recommendation-icon {
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- iOS Status Bar -->
+    <div class="status-bar">
+        <div>9:41</div>
+        <div>
+            <span class="mr-2"><i class="fas fa-signal"></i></span>
+            <span class="mr-2"><i class="fas fa-wifi"></i></span>
+            <span><i class="fas fa-battery-full"></i></span>
+        </div>
+    </div>
+    
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+        <div class="brand-header">
+            <img src="/public/img/sanicle_logo.svg" alt="Sanicle" class="brand-logo" style="height: 24px;">
+            <div class="nav-title">Dashboard</div>
+        </div>
+        <div class="nav-actions">
+            <i class="fas fa-bell nav-icon"></i>
+            <i class="fas fa-cog nav-icon"></i>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Welcome Section -->
+        <div class="mb-6">
+            <h1 class="text-2xl font-bold">Good morning, Emma!</h1>
+            <p class="text-muted">Here's your health summary for today</p>
+        </div>
+        
+        <!-- Cycle Tracker -->
+        <div class="card mb-6">
+            <h2 class="card-title mb-3">Cycle Tracker</h2>
+            <div class="cycle-progress">
+                <svg width="200" height="200" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="#f2f2f2" stroke-width="8" />
+                    <circle cx="50" cy="50" r="45" fill="none" stroke="var(--primary)" stroke-width="8" stroke-dasharray="283" stroke-dashoffset="70" transform="rotate(-90,50,50)" />
+                </svg>
+                <div class="cycle-day">14</div>
+                <div class="cycle-label">of 28 days</div>
+            </div>
+            <div class="mt-4 text-center">
+                <span class="badge badge-info">Ovulation Phase</span>
+                <p class="mt-2 text-sm text-muted">Period in 14 days</p>
+            </div>
+        </div>
+        
+        <!-- Today's Symptoms -->
+        <div class="card mb-6">
+            <h2 class="card-title mb-3">Today's Health</h2>
+            
+            <div class="health-metric">
+                <div class="health-icon bg-danger">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <div>
+                    <div class="health-value">68 bpm</div>
+                    <div class="health-label text-muted">Resting Heart Rate</div>
+                </div>
+            </div>
+            
+            <div class="health-metric">
+                <div class="health-icon bg-info">
+                    <i class="fas fa-bed"></i>
+                </div>
+                <div>
+                    <div class="health-value">7h 20m</div>
+                    <div class="health-label text-muted">Sleep Duration</div>
+                </div>
+            </div>
+            
+            <div class="health-metric">
+                <div class="health-icon bg-warning">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div>
+                    <div class="health-value">Moderate</div>
+                    <div class="health-label text-muted">Stress Level</div>
+                </div>
+            </div>
+            
+            <div class="health-metric">
+                <div class="health-icon bg-success">
+                    <i class="fas fa-walking"></i>
+                </div>
+                <div>
+                    <div class="health-value">6,452</div>
+                    <div class="health-label text-muted">Steps Today</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recommendations -->
+        <div class="card">
+            <h2 class="card-title mb-3">Today's Recommendations</h2>
+            <div class="recommendation-item recommendation-hydration">
+                <div class="recommendation-icon"><i class="fas fa-tint"></i></div>
+                <div>
+                    <div class="recommendation-title">Stay hydrated</div>
+                    <div class="recommendation-desc">Drink extra water during ovulation</div>
+                </div>
+            </div>
+            
+            <div class="recommendation-item recommendation-nutrition">
+                <div class="recommendation-icon"><i class="fas fa-apple-alt"></i></div>
+                <div>
+                    <div class="recommendation-title">Nutritional tip</div>
+                    <div class="recommendation-desc">Increase iron-rich foods today</div>
+                </div>
+            </div>
+            
+            <div class="recommendation-item recommendation-wellness">
+                <div class="recommendation-icon"><i class="fas fa-spa"></i></div>
+                <div>
+                    <div class="recommendation-title">Take a wellness break</div>
+                    <div class="recommendation-desc">15-minute meditation available</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+        <div class="tab-item active">
+            <div class="tab-icon"><i class="fas fa-home"></i></div>
+            <div>Home</div>
+        </div>
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-calendar"></i></div>
+            <div>Calendar</div>
+        </div>
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-chart-line"></i></div>
+            <div>Stats</div>
+        </div>
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-comment-dots"></i></div>
+            <div>Assistant</div>
+        </div>
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-user"></i></div>
+            <div>Profile</div>
+        </div>
+    </div>
+</body>
+</html> 

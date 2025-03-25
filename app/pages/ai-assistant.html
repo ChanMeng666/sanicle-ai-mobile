@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanicle - AI Health Assistant</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../css/sanicle-ui.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            color: #333;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .status-bar {
+            height: 44px;
+            background-color: #000;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 22px;
+            font-size: 14px;
+        }
+        
+        .nav-bar {
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            background-color: var(--muted);
+        }
+        
+        .tab-bar {
+            height: 70px;
+            background-color: #fff;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 10px;
+            color: #888;
+        }
+        
+        .tab-item.active {
+            color: #FF5F85;
+        }
+        
+        .tab-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+        
+        .primary-color {
+            color: #FF5F85;
+        }
+        
+        .primary-bg {
+            background-color: #FF5F85;
+        }
+        
+        .secondary-color {
+            color: #6B7280;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            max-width: 80%;
+            margin-bottom: 12px;
+            padding: 12px 16px;
+            border-radius: 18px;
+            position: relative;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+
+        .assistant-message {
+            background-color: var(--muted);
+            color: var(--foreground);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .user-message {
+            background-color: var(--primary);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 10px;
+            margin-top: 4px;
+            opacity: 0.7;
+        }
+
+        .assistant-profile {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .assistant-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            margin-right: 12px;
+        }
+
+        .assistant-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .assistant-status {
+            font-size: 12px;
+            color: var(--muted-foreground);
+        }
+
+        .message-input {
+            display: flex;
+            padding: 12px 16px;
+            background-color: var(--background);
+            border-top: 1px solid var(--border);
+        }
+
+        .input-field {
+            flex: 1;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 16px;
+            font-size: 14px;
+            background-color: var(--muted);
+            margin-right: 8px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(22, 125, 131, 0.2);
+        }
+
+        .send-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .send-button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 16px 0;
+        }
+
+        .suggestion-chip {
+            background-color: var(--background);
+            border: 1px solid var(--border);
+            color: var(--muted-foreground);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .suggestion-chip:hover {
+            background-color: var(--primary-bg);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- iOS Status Bar -->
+    <div class="status-bar">
+        <div>9:41</div>
+        <div>
+            <span class="mr-2"><i class="fas fa-signal"></i></span>
+            <span class="mr-2"><i class="fas fa-wifi"></i></span>
+            <span><i class="fas fa-battery-full"></i></span>
+        </div>
+    </div>
+    
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+        <div class="brand-header">
+            <img src="/public/img/sanicle_logo.svg" alt="Sanicle" class="brand-logo" style="height: 24px;">
+            <div class="nav-title">Health Assistant</div>
+        </div>
+        <div class="nav-actions">
+            <i class="fas fa-info-circle nav-icon"></i>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Assistant Profile -->
+        <div class="assistant-profile">
+            <div class="assistant-avatar">
+                <i class="fas fa-robot"></i>
+            </div>
+            <div>
+                <div class="assistant-name">Iris</div>
+                <div class="assistant-status">AI Health Advisor • Online</div>
+            </div>
+        </div>
+        
+        <!-- Chat Messages -->
+        <div class="chat-container">
+            <div class="message assistant-message">
+                <div>Hello Emma! I'm Iris, your personal health assistant. How can I help you today?</div>
+                <div class="message-time">9:30 AM</div>
+            </div>
+            
+            <div class="suggestion-chips">
+                <div class="suggestion-chip">Tell me about my cycle</div>
+                <div class="suggestion-chip">Workplace health benefits</div>
+                <div class="suggestion-chip">Menopause symptoms</div>
+                <div class="suggestion-chip">Stress management</div>
+            </div>
+            
+            <div class="message user-message">
+                <div>I've been feeling more tired than usual lately, especially after lunch. Could this be related to my cycle?</div>
+                <div class="message-time">9:32 AM</div>
+            </div>
+            
+            <div class="message assistant-message">
+                <div>Based on your cycle data, you're currently in your luteal phase (day 14 of 28). Fatigue is actually common during this phase due to hormonal changes, particularly progesterone which can make you feel more tired.</div>
+                <div class="message-time">9:32 AM</div>
+            </div>
+            
+            <div class="message assistant-message">
+                <div>Here are some suggestions that might help:</div>
+                <div>1. Try to get 7-8 hours of sleep</div>
+                <div>2. Consider a short 20-min power nap after lunch</div>
+                <div>3. Eat iron-rich foods (your data shows slightly low iron levels)</div>
+                <div>4. Stay hydrated throughout the day</div>
+                <div>5. Light exercise like walking can boost energy</div>
+                <div class="message-time">9:33 AM</div>
+            </div>
+            
+            <div class="message user-message">
+                <div>Thanks! Is there anything specific in my workplace policy that might help with this?</div>
+                <div class="message-time">9:35 AM</div>
+            </div>
+            
+            <div class="message assistant-message">
+                <div>Yes! I checked your company's wellness policy and found these options:</div>
+                <div>• Your company offers flexible work hours - you could shift your schedule to match your energy levels</div>
+                <div>• There's a dedicated wellness room (3rd floor, Room 302) for short rest periods</div>
+                <div>• The health insurance covers nutritional counseling - might be helpful for energy management</div>
+                <div>• You have 2 wellness days remaining this quarter that can be used without counting as sick leave</div>
+                <div class="message-time">9:36 AM</div>
+            </div>
+            
+            <div class="message user-message">
+                <div>That's very helpful! I'll try adjusting my schedule and maybe use one of those wellness days next week.</div>
+                <div class="message-time">9:38 AM</div>
+            </div>
+            
+            <div class="message assistant-message">
+                <div>Great plan! Would you like me to suggest some specific times for your power naps based on your meeting schedule for the next week?</div>
+                <div class="message-time">9:39 AM</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Message Input -->
+    <div class="message-input">
+        <input type="text" class="input-field" placeholder="Type a message...">
+        <button class="send-button">
+            <i class="fas fa-paper-plane"></i>
+        </button>
+    </div>
+    
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-home"></i></div>
+            <div>Home</div>
+        </div>
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-calendar"></i></div>
+            <div>Calendar</div>
+        </div>
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-chart-line"></i></div>
+            <div>Stats</div>
+        </div>
+        <div class="tab-item active">
+            <div class="tab-icon"><i class="fas fa-comment-dots"></i></div>
+            <div>Assistant</div>
+        </div>
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-user"></i></div>
+            <div>Profile</div>
+        </div>
+    </div>
+</body>
+</html> 

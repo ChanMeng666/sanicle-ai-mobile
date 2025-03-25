@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanicle - Work Calendar</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../css/sanicle-ui.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            color: #333;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .status-bar {
+            height: 44px;
+            background-color: #000;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 22px;
+            font-size: 14px;
+        }
+        
+        .nav-bar {
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            background-color: #F9FAFB;
+        }
+        
+        .tab-bar {
+            height: 70px;
+            background-color: #fff;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 10px;
+            color: #888;
+        }
+        
+        .tab-item.active {
+            color: #FF5F85;
+        }
+        
+        .tab-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+        
+        .primary-color {
+            color: #FF5F85;
+        }
+        
+        .primary-bg {
+            background-color: #FF5F85;
+        }
+        
+        .secondary-color {
+            color: #6B7280;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-weight: 500;
+            font-size: 12px;
+            color: var(--muted-foreground);
+            padding-bottom: 8px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 12px;
+            font-size: 14px;
+            position: relative;
+            border: 1px solid #eee;
+        }
+
+        .calendar-day.today {
+            background-color: #E5E7EB;
+            font-weight: bold;
+        }
+
+        .calendar-day.period {
+            border-top: 3px solid #FF5F85;
+        }
+
+        .calendar-day.work-task {
+            border-bottom: 3px solid #3B82F6;
+        }
+
+        .calendar-day.shared {
+            border-left: 3px solid #10B981;
+        }
+
+        .day-indicators {
+            display: flex;
+            position: absolute;
+            bottom: 2px;
+            gap: 2px;
+        }
+
+        .day-indicator {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+        }
+
+        .work-event {
+            background-color: var(--info);
+        }
+
+        .health-event {
+            background-color: var(--accent);
+        }
+
+        .reminder-event {
+            background-color: var(--warning);
+        }
+
+        .view-toggle {
+            display: flex;
+            background-color: var(--muted);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 16px;
+        }
+
+        .view-option {
+            flex: 1;
+            text-align: center;
+            padding: 8px 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--muted-foreground);
+            border-radius: 8px;
+        }
+
+        .view-option.active {
+            background-color: var(--background);
+            color: var(--foreground);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-item {
+            background-color: white;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid transparent;
+        }
+
+        .task-item.work {
+            border-left-color: #3B82F6;
+        }
+
+        .task-item.health {
+            border-left-color: #FF5F85;
+        }
+
+        .task-item.adjusted {
+            border-left-color: #8B5CF6;
+        }
+
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+
+        .task-time {
+            color: #6B7280;
+        }
+
+        .task-status {
+            padding: 2px 6px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background-color: #FEF3C7;
+            color: #D97706;
+        }
+
+        .status-approved {
+            background-color: #D1FAE5;
+            color: #059669;
+        }
+
+        .status-adjusted {
+            background-color: #EDE9FE;
+            color: #7C3AED;
+        }
+
+        .share-options {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 16px;
+        }
+
+        .share-option {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--muted-foreground);
+            border: 1px solid var(--border);
+            margin: 0 4px;
+        }
+
+        .share-option.active {
+            border-color: var(--primary);
+            color: var(--primary);
+            background-color: var(--primary-bg);
+        }
+
+        .notification-card {
+            display: flex;
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            background-color: #FEF2F2;
+            border-left: 4px solid #FF5F85;
+        }
+
+        .notification-icon {
+            margin-right: 12px;
+            color: #FF5F85;
+            font-size: 20px;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .notification-text {
+            font-size: 12px;
+            color: #4B5563;
+        }
+
+        .notification-actions {
+            display: flex;
+            margin-top: 8px;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 12px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .manager-feedback {
+            padding: 12px;
+            background-color: var(--muted);
+            border-radius: 8px;
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--muted-foreground);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 36px;
+            height: 20px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .3s;
+            border-radius: 20px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #FF5F85;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(16px);
+        }
+        
+        .calendar-legend {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 11px;
+            color: var(--muted-foreground);
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            margin-right: 4px;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- iOS Status Bar -->
+    <div class="status-bar">
+        <div>9:41</div>
+        <div>
+            <span class="mr-2"><i class="fas fa-signal"></i></span>
+            <span class="mr-2"><i class="fas fa-wifi"></i></span>
+            <span><i class="fas fa-battery-full"></i></span>
+        </div>
+    </div>
+    
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+        <div class="brand-header">
+            <img src="/public/img/sanicle_logo.svg" alt="Sanicle" class="brand-logo" style="height: 24px;">
+            <div class="nav-title">Work Calendar</div>
+        </div>
+        <div class="nav-actions">
+            <i class="fas fa-bell nav-icon"></i>
+            <i class="fas fa-sliders-h nav-icon"></i>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Notification about upcoming period -->
+        <div class="notification notification-warning">
+            <div class="notification-icon">
+                <i class="fas fa-bell"></i>
+            </div>
+            <div class="notification-content">
+                <div class="notification-title">Period Starting Soon</div>
+                <div class="notification-text">Your period is expected to start in 3 days. Would you like to request work adjustments?</div>
+                <div class="notification-actions">
+                    <button class="btn btn-primary btn-sm">Request Adjustments</button>
+                    <button class="btn btn-outline btn-sm">Dismiss</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- View Toggle -->
+        <div class="view-toggle">
+            <div class="view-option active">Calendar</div>
+            <div class="view-option">Adjustments</div>
+            <div class="view-option">Notifications</div>
+        </div>
+        
+        <!-- Calendar Section -->
+        <div class="card">
+            <div class="calendar-header">
+                <button class="btn btn-ghost btn-sm text-muted"><i class="fas fa-chevron-left"></i></button>
+                <h2 class="card-title">April 2025</h2>
+                <button class="btn btn-ghost btn-sm text-muted"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            
+            <!-- Visibility Settings -->
+            <div class="flex justify-between items-center mb-4">
+                <div class="text-sm font-medium">Health Data Visibility</div>
+                <div class="flex items-center">
+                    <span class="text-xs mr-2 text-muted">Only Me</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="slider"></span>
+                    </label>
+                    <span class="text-xs ml-2 text-muted">Manager</span>
+                </div>
+            </div>
+            
+            <div class="calendar-grid">
+                <!-- Day headers -->
+                <div class="calendar-day-header">S</div>
+                <div class="calendar-day-header">M</div>
+                <div class="calendar-day-header">T</div>
+                <div class="calendar-day-header">W</div>
+                <div class="calendar-day-header">T</div>
+                <div class="calendar-day-header">F</div>
+                <div class="calendar-day-header">S</div>
+                
+                <!-- Days from previous month -->
+                <div class="calendar-day text-muted">30</div>
+                <div class="calendar-day text-muted">31</div>
+                
+                <!-- Days in current month with integrated health and work data -->
+                <div class="calendar-day">
+                    1
+                    <div class="day-indicators">
+                        <div class="day-indicator work-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day">
+                    2
+                    <div class="day-indicators">
+                        <div class="day-indicator work-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day">
+                    3
+                    <div class="day-indicators">
+                        <div class="day-indicator work-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day">
+                    4
+                    <div class="day-indicators">
+                        <div class="day-indicator work-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day">
+                    5
+                    <div class="day-indicators">
+                        <div class="day-indicator work-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day period">
+                    6
+                    <div class="day-indicators">
+                        <div class="day-indicator health-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day period">
+                    7
+                    <div class="day-indicators">
+                        <div class="day-indicator health-event"></div>
+                        <div class="day-indicator work-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day period shared">
+                    8
+                    <div class="day-indicators">
+                        <div class="day-indicator health-event"></div>
+                        <div class="day-indicator work-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day period">
+                    9
+                    <div class="day-indicators">
+                        <div class="day-indicator health-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day">
+                    10
+                    <div class="day-indicators">
+                        <div class="day-indicator work-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day">
+                    11
+                    <div class="day-indicators">
+                        <div class="day-indicator work-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day">
+                    12
+                    <div class="day-indicators">
+                        <div class="day-indicator work-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day today work-task">
+                    13
+                    <div class="day-indicators">
+                        <div class="day-indicator work-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day">
+                    14
+                    <div class="day-indicators">
+                        <div class="day-indicator work-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day">
+                    15
+                    <div class="day-indicators">
+                        <div class="day-indicator work-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day">
+                    16
+                    <div class="day-indicators">
+                        <div class="day-indicator work-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day">
+                    17
+                    <div class="day-indicators">
+                        <div class="day-indicator work-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day">
+                    18
+                    <div class="day-indicators">
+                        <div class="day-indicator work-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day">
+                    19
+                </div>
+                <div class="calendar-day">
+                    20
+                </div>
+                <div class="calendar-day">
+                    21
+                    <div class="day-indicators">
+                        <div class="day-indicator work-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day">
+                    22
+                    <div class="day-indicators">
+                        <div class="day-indicator work-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day">
+                    23
+                    <div class="day-indicators">
+                        <div class="day-indicator work-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day">
+                    24
+                    <div class="day-indicators">
+                        <div class="day-indicator work-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day">
+                    25
+                    <div class="day-indicators">
+                        <div class="day-indicator work-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day">
+                    26
+                </div>
+                <div class="calendar-day">
+                    27
+                </div>
+                <div class="calendar-day">
+                    28
+                    <div class="day-indicators">
+                        <div class="day-indicator work-event"></div>
+                        <div class="day-indicator reminder-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day">
+                    29
+                    <div class="day-indicators">
+                        <div class="day-indicator work-event"></div>
+                        <div class="day-indicator reminder-event"></div>
+                    </div>
+                </div>
+                <div class="calendar-day">
+                    30
+                    <div class="day-indicators">
+                        <div class="day-indicator work-event"></div>
+                        <div class="day-indicator reminder-event"></div>
+                    </div>
+                </div>
+                
+                <!-- Days from next month -->
+                <div class="calendar-day text-muted">1</div>
+                <div class="calendar-day text-muted">2</div>
+                <div class="calendar-day text-muted">3</div>
+            </div>
+            
+            <div class="calendar-legend">
+                <div class="legend-item">
+                    <div class="legend-color" style="border-top: 3px solid var(--accent);"></div>
+                    <span>Period Days</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="border-bottom: 3px solid var(--info);"></div>
+                    <span>Work Tasks</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="border-left: 3px solid var(--success);"></div>
+                    <span>Shared Info</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Today's Schedule -->
+        <h2 class="card-title mb-3">April 13 Schedule</h2>
+        
+        <div class="task-item work">
+            <div class="task-meta">
+                <div class="task-time">9:00 AM - 10:30 AM</div>
+                <div class="badge badge-success">Approved</div>
+            </div>
+            <div class="font-medium text-sm">Team Weekly Meeting</div>
+            <div class="text-xs text-muted mt-1">Remote participation approved</div>
+        </div>
+        
+        <div class="task-item adjusted">
+            <div class="task-meta">
+                <div class="task-time">1:00 PM - 3:00 PM</div>
+                <div class="badge badge-info">Adjusted</div>
+            </div>
+            <div class="font-medium text-sm">Project Alpha Deadline</div>
+            <div class="text-xs text-muted mt-1">Deadline extended to Apr 20</div>
+            <div class="manager-feedback">
+                <i class="fas fa-comment-alt mr-1"></i> Manager: I've adjusted the timeline. Take the time you need to deliver quality work.
+            </div>
+        </div>
+        
+        <div class="task-item work">
+            <div class="task-meta">
+                <div class="task-time">4:00 PM - 5:00 PM</div>
+            </div>
+            <div class="font-medium text-sm">Client Call</div>
+            <div class="text-xs text-muted mt-1">Preparation needed</div>
+        </div>
+        
+        <!-- Communication with Manager -->
+        <div class="card mt-6">
+            <h2 class="card-title mb-3">Request Work Adjustments</h2>
+            
+            <div class="mb-4">
+                <label class="input-label">Select dates that need adjustment</label>
+                <input type="text" class="input" placeholder="Apr 7 - Apr 9, 2025">
+            </div>
+            
+            <div class="mb-4">
+                <label class="input-label">Type of adjustment needed</label>
+                <select class="select">
+                    <option>Remote work</option>
+                    <option>Deadline extension</option>
+                    <option>Reassign tasks</option>
+                    <option>Flexible hours</option>
+                    <option>Time off</option>
+                </select>
+            </div>
+            
+            <div class="mb-4">
+                <label class="input-label">Reason (optional)</label>
+                <textarea class="input" rows="2" placeholder="Provide additional context if needed"></textarea>
+            </div>
+            
+            <div class="share-options mb-4">
+                <div class="share-option active">
+                    <i class="fas fa-user-shield mb-1"></i>
+                    <div>Private</div>
+                </div>
+                <div class="share-option">
+                    <i class="fas fa-stethoscope mb-1"></i>
+                    <div>Health Phase</div>
+                </div>
+                <div class="share-option">
+                    <i class="fas fa-calendar-check mb-1"></i>
+                    <div>All Details</div>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary btn-full">Submit Request</button>
+        </div>
+    </div>
+    
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-home"></i></div>
+            <div>Home</div>
+        </div>
+        <div class="tab-item active">
+            <div class="tab-icon"><i class="fas fa-calendar"></i></div>
+            <div>Calendar</div>
+        </div>
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-chart-line"></i></div>
+            <div>Stats</div>
+        </div>
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-comment-dots"></i></div>
+            <div>Assistant</div>
+        </div>
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-user"></i></div>
+            <div>Profile</div>
+        </div>
+    </div>
+</body>
+</html> 

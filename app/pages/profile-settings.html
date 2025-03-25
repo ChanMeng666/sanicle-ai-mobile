@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanicle - Profile Settings</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../css/sanicle-ui.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background);
+            color: var(--foreground);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .status-bar {
+            height: 44px;
+            background-color: #000;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 22px;
+            font-size: 14px;
+        }
+        
+        .nav-bar {
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        
+        .tab-bar {
+            height: 70px;
+            background-color: #fff;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 10px;
+            color: #888;
+        }
+        
+        .tab-item.active {
+            color: var(--primary);
+        }
+        
+        .tab-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--muted);
+            position: relative;
+            overflow: hidden;
+            margin-right: 16px;
+        }
+        
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .avatar-edit-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: var(--primary);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+        
+        .profile-name {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .profile-title {
+            color: var(--muted-foreground);
+            font-size: 14px;
+        }
+        
+        .setting-section {
+            margin-bottom: 24px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .setting-label {
+            font-size: 14px;
+            color: var(--foreground);
+        }
+        
+        .setting-value {
+            font-size: 14px;
+            color: var(--muted-foreground);
+            display: flex;
+            align-items: center;
+        }
+        
+        .setting-arrow {
+            color: var(--muted-foreground);
+            margin-left: 8px;
+        }
+        
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 36px;
+            height: 20px;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .3s;
+            border-radius: 20px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(16px);
+        }
+        
+        .sign-out-btn {
+            display: block;
+            width: 100%;
+            padding: 12px 0;
+            text-align: center;
+            background-color: var(--destructive-bg);
+            color: var(--destructive);
+            border-radius: 12px;
+            font-weight: 500;
+            margin-top: 24px;
+        }
+        
+        .version-info {
+            text-align: center;
+            font-size: 12px;
+            color: var(--muted-foreground);
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+    <!-- iOS Status Bar -->
+    <div class="status-bar">
+        <div>9:41</div>
+        <div>
+            <span class="mr-2"><i class="fas fa-signal"></i></span>
+            <span class="mr-2"><i class="fas fa-wifi"></i></span>
+            <span><i class="fas fa-battery-full"></i></span>
+        </div>
+    </div>
+    
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+        <div class="brand-header">
+            <img src="/public/img/sanicle_logo.svg" alt="Sanicle" class="brand-logo" style="height: 24px;">
+            <div class="nav-title">Profile & Settings</div>
+        </div>
+        <div class="nav-actions">
+            <i class="fas fa-moon nav-icon"></i>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Profile Header -->
+        <div class="card">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=256&q=80" alt="Profile">
+                    <div class="avatar-edit-btn">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                </div>
+                <div>
+                    <div class="profile-name">Emma Johnson</div>
+                    <div class="profile-title">Product Designer • TechCorp</div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-3 gap-4 text-center">
+                <div>
+                    <div class="text-lg font-semibold">28</div>
+                    <div class="text-xs text-muted">Age</div>
+                </div>
+                <div>
+                    <div class="text-lg font-semibold">28d</div>
+                    <div class="text-xs text-muted">Avg. Cycle</div>
+                </div>
+                <div>
+                    <div class="text-lg font-semibold">14</div>
+                    <div class="text-xs text-muted">Current Day</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Account Settings -->
+        <div class="setting-section">
+            <div class="section-title">Account</div>
+            
+            <div class="setting-item">
+                <div class="setting-label">Personal Information</div>
+                <div class="setting-value">
+                    <i class="fas fa-chevron-right setting-arrow"></i>
+                </div>
+            </div>
+            
+            <div class="setting-item">
+                <div class="setting-label">Health Profile</div>
+                <div class="setting-value">
+                    <i class="fas fa-chevron-right setting-arrow"></i>
+                </div>
+            </div>
+            
+            <div class="setting-item">
+                <div class="setting-label">Cycle History</div>
+                <div class="setting-value">
+                    <i class="fas fa-chevron-right setting-arrow"></i>
+                </div>
+            </div>
+            
+            <div class="setting-item">
+                <div class="setting-label">Connected Devices</div>
+                <div class="setting-value">
+                    <span class="mr-2">1 Device</span>
+                    <i class="fas fa-chevron-right setting-arrow"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- App Settings -->
+        <div class="setting-section">
+            <div class="section-title">App Settings</div>
+            
+            <div class="setting-item">
+                <div class="setting-label">Notifications</div>
+                <div class="setting-value">
+                    <i class="fas fa-chevron-right setting-arrow"></i>
+                </div>
+            </div>
+            
+            <div class="setting-item">
+                <div class="setting-label">Privacy & Data</div>
+                <div class="setting-value">
+                    <i class="fas fa-chevron-right setting-arrow"></i>
+                </div>
+            </div>
+            
+            <div class="setting-item">
+                <div class="setting-label">Dark Mode</div>
+                <div class="setting-value">
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="setting-item">
+                <div class="setting-label">Language</div>
+                <div class="setting-value">
+                    <span class="mr-2">English</span>
+                    <i class="fas fa-chevron-right setting-arrow"></i>
+                </div>
+            </div>
+            
+            <div class="setting-item">
+                <div class="setting-label">Backup & Restore</div>
+                <div class="setting-value">
+                    <i class="fas fa-chevron-right setting-arrow"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Work Integration Settings -->
+        <div class="setting-section">
+            <div class="section-title">Work Integration</div>
+            
+            <div class="setting-item">
+                <div class="setting-label">Connected Work Account</div>
+                <div class="setting-value">
+                    <span class="mr-2">emma@techcorp.com</span>
+                    <i class="fas fa-chevron-right setting-arrow"></i>
+                </div>
+            </div>
+            
+            <div class="setting-item">
+                <div class="setting-label">Calendar Sync</div>
+                <div class="setting-value">
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="setting-item">
+                <div class="setting-label">HR Dashboard Access</div>
+                <div class="setting-value">
+                    <span class="mr-2">Disabled</span>
+                    <i class="fas fa-chevron-right setting-arrow"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Support Section -->
+        <div class="setting-section">
+            <div class="section-title">Support</div>
+            
+            <div class="setting-item">
+                <div class="setting-label">Help Center</div>
+                <div class="setting-value">
+                    <i class="fas fa-chevron-right setting-arrow"></i>
+                </div>
+            </div>
+            
+            <div class="setting-item">
+                <div class="setting-label">Report a Problem</div>
+                <div class="setting-value">
+                    <i class="fas fa-chevron-right setting-arrow"></i>
+                </div>
+            </div>
+            
+            <div class="setting-item">
+                <div class="setting-label">Privacy Policy</div>
+                <div class="setting-value">
+                    <i class="fas fa-chevron-right setting-arrow"></i>
+                </div>
+            </div>
+            
+            <div class="setting-item">
+                <div class="setting-label">Terms of Service</div>
+                <div class="setting-value">
+                    <i class="fas fa-chevron-right setting-arrow"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sign Out Button -->
+        <button class="sign-out-btn">Sign Out</button>
+        
+        <!-- Version Info -->
+        <div class="version-info">Sanicle v1.2.3</div>
+    </div>
+    
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-home"></i></div>
+            <div>Home</div>
+        </div>
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-calendar"></i></div>
+            <div>Calendar</div>
+        </div>
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-chart-line"></i></div>
+            <div>Stats</div>
+        </div>
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-comment-dots"></i></div>
+            <div>Assistant</div>
+        </div>
+        <div class="tab-item active">
+            <div class="tab-icon"><i class="fas fa-user"></i></div>
+            <div>Profile</div>
+        </div>
+    </div>
+</body>
+</html> 

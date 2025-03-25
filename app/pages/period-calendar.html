@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanicle - Period Calendar</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../css/sanicle-ui.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            color: #333;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .status-bar {
+            height: 44px;
+            background-color: #000;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 22px;
+            font-size: 14px;
+        }
+        
+        .nav-bar {
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        
+        .tab-bar {
+            height: 70px;
+            background-color: #fff;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 10px;
+            color: #888;
+        }
+        
+        .tab-item.active {
+            color: #FF5F85;
+        }
+        
+        .tab-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+        
+        .primary-color {
+            color: #FF5F85;
+        }
+        
+        .primary-bg {
+            background-color: #FF5F85;
+        }
+        
+        .secondary-color {
+            color: #6B7280;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-weight: 500;
+            font-size: 12px;
+            color: var(--muted-foreground);
+            padding-bottom: 8px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .calendar-day.today {
+            background-color: var(--muted);
+            font-weight: bold;
+        }
+
+        .calendar-day.period {
+            background-color: rgba(238, 76, 35, 0.1);
+            color: var(--accent);
+        }
+
+        .calendar-day.period.active {
+            background-color: var(--accent);
+            color: white;
+            font-weight: bold;
+        }
+
+        .calendar-day.fertile {
+            background-color: rgba(22, 125, 131, 0.1);
+            color: var(--primary);
+        }
+
+        .calendar-day.ovulation {
+            background-color: rgba(22, 125, 131, 0.3);
+            color: var(--primary-dark);
+            font-weight: bold;
+        }
+
+        .cycle-phases {
+            display: flex;
+            margin-top: 24px;
+            padding: 16px 0;
+            border-top: 1px solid var(--border);
+            justify-content: space-around;
+        }
+
+        .cycle-phase {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cycle-indicator {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-bottom: 8px;
+        }
+
+        .mood-tracker {
+            margin-top: 24px;
+        }
+
+        .mood-options {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 12px;
+        }
+
+        .mood-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .mood-icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+            color: var(--muted-foreground);
+        }
+
+        .mood-icon.selected {
+            color: var(--primary);
+        }
+
+        .symptom-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .symptom-tag {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            background-color: var(--muted);
+            color: var(--muted-foreground);
+        }
+
+        .symptom-tag.selected {
+            background-color: var(--primary);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- iOS Status Bar -->
+    <div class="status-bar">
+        <div>9:41</div>
+        <div>
+            <span class="mr-2"><i class="fas fa-signal"></i></span>
+            <span class="mr-2"><i class="fas fa-wifi"></i></span>
+            <span><i class="fas fa-battery-full"></i></span>
+        </div>
+    </div>
+    
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+        <div class="brand-header">
+            <img src="/public/img/sanicle_logo.svg" alt="Sanicle" class="brand-logo" style="height: 24px;">
+            <div class="nav-title">Cycle Calendar</div>
+        </div>
+        <div class="nav-actions">
+            <i class="fas fa-sliders-h nav-icon"></i>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Calendar Section -->
+        <div class="card">
+            <div class="calendar-header">
+                <button class="btn btn-ghost btn-sm text-muted"><i class="fas fa-chevron-left"></i></button>
+                <h2 class="card-title">April 2025</h2>
+                <button class="btn btn-ghost btn-sm text-muted"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            
+            <div class="calendar-grid">
+                <!-- Day headers -->
+                <div class="calendar-day-header">S</div>
+                <div class="calendar-day-header">M</div>
+                <div class="calendar-day-header">T</div>
+                <div class="calendar-day-header">W</div>
+                <div class="calendar-day-header">T</div>
+                <div class="calendar-day-header">F</div>
+                <div class="calendar-day-header">S</div>
+                
+                <!-- Days from previous month -->
+                <div class="calendar-day text-muted">30</div>
+                <div class="calendar-day text-muted">31</div>
+                
+                <!-- Days in current month -->
+                <div class="calendar-day">1</div>
+                <div class="calendar-day">2</div>
+                <div class="calendar-day">3</div>
+                <div class="calendar-day">4</div>
+                <div class="calendar-day">5</div>
+                <div class="calendar-day period">6</div>
+                <div class="calendar-day period active">7</div>
+                <div class="calendar-day period">8</div>
+                <div class="calendar-day period">9</div>
+                <div class="calendar-day">10</div>
+                <div class="calendar-day">11</div>
+                <div class="calendar-day">12</div>
+                <div class="calendar-day today">13</div>
+                <div class="calendar-day fertile">14</div>
+                <div class="calendar-day fertile">15</div>
+                <div class="calendar-day ovulation">16</div>
+                <div class="calendar-day fertile">17</div>
+                <div class="calendar-day fertile">18</div>
+                <div class="calendar-day">19</div>
+                <div class="calendar-day">20</div>
+                <div class="calendar-day">21</div>
+                <div class="calendar-day">22</div>
+                <div class="calendar-day">23</div>
+                <div class="calendar-day">24</div>
+                <div class="calendar-day">25</div>
+                <div class="calendar-day">26</div>
+                <div class="calendar-day">27</div>
+                <div class="calendar-day">28</div>
+                <div class="calendar-day">29</div>
+                <div class="calendar-day">30</div>
+                
+                <!-- Days from next month -->
+                <div class="calendar-day text-muted">1</div>
+                <div class="calendar-day text-muted">2</div>
+                <div class="calendar-day text-muted">3</div>
+            </div>
+            
+            <div class="cycle-phases">
+                <div class="cycle-phase">
+                    <div class="cycle-indicator" style="background-color: var(--accent);"></div>
+                    <div class="text-xs">Period</div>
+                </div>
+                <div class="cycle-phase">
+                    <div class="cycle-indicator" style="background-color: var(--primary);"></div>
+                    <div class="text-xs">Fertile</div>
+                </div>
+                <div class="cycle-phase">
+                    <div class="cycle-indicator" style="background-color: var(--primary-dark);"></div>
+                    <div class="text-xs">Ovulation</div>
+                </div>
+                <div class="cycle-phase">
+                    <div class="cycle-indicator" style="background-color: var(--muted);"></div>
+                    <div class="text-xs">Today</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Daily Log Section -->
+        <div class="card">
+            <h2 class="card-title mb-3">April 13, 2025</h2>
+            
+            <!-- Mood Tracker -->
+            <div class="mood-tracker">
+                <h3 class="font-medium text-foreground">How are you feeling today?</h3>
+                <div class="mood-options">
+                    <div class="mood-option">
+                        <div class="mood-icon"><i class="far fa-sad-cry"></i></div>
+                        <div class="text-xs">Terrible</div>
+                    </div>
+                    <div class="mood-option">
+                        <div class="mood-icon"><i class="far fa-frown"></i></div>
+                        <div class="text-xs">Bad</div>
+                    </div>
+                    <div class="mood-option">
+                        <div class="mood-icon"><i class="far fa-meh"></i></div>
+                        <div class="text-xs">Okay</div>
+                    </div>
+                    <div class="mood-option">
+                        <div class="mood-icon selected"><i class="far fa-smile"></i></div>
+                        <div class="text-xs">Good</div>
+                    </div>
+                    <div class="mood-option">
+                        <div class="mood-icon"><i class="far fa-grin-stars"></i></div>
+                        <div class="text-xs">Great</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Symptoms Tracker -->
+            <div class="mt-6">
+                <h3 class="font-medium text-foreground mb-2">Symptoms</h3>
+                <div class="symptom-tags">
+                    <div class="symptom-tag">Cramps</div>
+                    <div class="symptom-tag selected">Headache</div>
+                    <div class="symptom-tag">Bloating</div>
+                    <div class="symptom-tag">Fatigue</div>
+                    <div class="symptom-tag">Acne</div>
+                    <div class="symptom-tag selected">Breast tenderness</div>
+                    <div class="symptom-tag">Mood swings</div>
+                    <div class="symptom-tag">Food cravings</div>
+                    <div class="symptom-tag">Insomnia</div>
+                    <div class="symptom-tag">+ Add custom</div>
+                </div>
+            </div>
+            
+            <!-- Notes -->
+            <div class="mt-6">
+                <h3 class="font-medium text-foreground mb-2">Notes</h3>
+                <textarea class="input" rows="3" placeholder="Add any notes about your day here...">Feeling more energetic today. The meditation session helped with my focus at work.</textarea>
+            </div>
+            
+            <button class="btn btn-primary btn-full mt-6">Save Today's Log</button>
+        </div>
+    </div>
+    
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-home"></i></div>
+            <div>Home</div>
+        </div>
+        <div class="tab-item active">
+            <div class="tab-icon"><i class="fas fa-calendar"></i></div>
+            <div>Calendar</div>
+        </div>
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-chart-line"></i></div>
+            <div>Stats</div>
+        </div>
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-comment-dots"></i></div>
+            <div>Assistant</div>
+        </div>
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-user"></i></div>
+            <div>Profile</div>
+        </div>
+    </div>
+</body>
+</html> 

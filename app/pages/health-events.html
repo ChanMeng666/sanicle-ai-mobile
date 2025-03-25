@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sanicle - Health Events</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="../css/sanicle-ui.css">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+            color: #333;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .status-bar {
+            height: 44px;
+            background-color: #000;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 22px;
+            font-size: 14px;
+        }
+        
+        .nav-bar {
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            background-color: #F9FAFB;
+        }
+        
+        .tab-bar {
+            height: 70px;
+            background-color: #fff;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 10px;
+            color: #888;
+        }
+        
+        .tab-item.active {
+            color: #FF5F85;
+        }
+        
+        .tab-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+        
+        .primary-color {
+            color: #FF5F85;
+        }
+        
+        .primary-bg {
+            background-color: #FF5F85;
+        }
+        
+        .secondary-color {
+            color: #6B7280;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .event-card {
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .event-image {
+            height: 140px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .event-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+        }
+        
+        .event-date {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            background-color: white;
+            color: #1F2937;
+        }
+        
+        .event-content {
+            padding: 16px;
+        }
+        
+        .event-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+        
+        .event-meta {
+            display: flex;
+            font-size: 12px;
+            color: #6B7280;
+            margin-bottom: 12px;
+        }
+        
+        .event-host {
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .event-location {
+            display: flex;
+            align-items: center;
+        }
+        
+        .event-description {
+            font-size: 14px;
+            line-height: 1.4;
+            color: #4B5563;
+            margin-bottom: 12px;
+        }
+        
+        .event-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .event-attendees {
+            display: flex;
+        }
+        
+        .attendee-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--muted);
+            margin-left: -8px;
+            border: 2px solid white;
+            overflow: hidden;
+        }
+        
+        .attendee-avatar:first-child {
+            margin-left: 0;
+        }
+        
+        .attendee-count {
+            font-size: 12px;
+            color: var(--muted-foreground);
+            margin-left: 8px;
+            align-self: center;
+        }
+        
+        .btn-register {
+            padding: 6px 12px;
+            background-color: #FF5F85;
+            color: white;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .btn-registered {
+            padding: 6px 12px;
+            background-color: #D1FAE5;
+            color: #059669;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .events-filter {
+            display: flex;
+            background-color: var(--muted);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 16px;
+        }
+        
+        .filter-option {
+            flex: 1;
+            text-align: center;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--muted-foreground);
+            border-radius: 8px;
+        }
+        
+        .filter-option.active {
+            background-color: var(--background);
+            color: var(--foreground);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .category-tabs {
+            display: flex;
+            overflow-x: auto;
+            margin-bottom: 16px;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        
+        .category-tabs::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .category-tab {
+            white-space: nowrap;
+            padding: 8px 16px;
+            margin-right: 8px;
+            background-color: var(--muted);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--muted-foreground);
+        }
+        
+        .category-tab.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .admin-section {
+            background-color: var(--muted);
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 16px;
+        }
+
+        .admin-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--foreground);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .admin-title i {
+            margin-right: 6px;
+            color: var(--muted-foreground);
+        }
+
+        .btn-add-event {
+            width: 100%;
+            padding: 8px 0;
+            background-color: var(--primary-bg);
+            color: var(--primary);
+            border: 1px dashed var(--primary);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-add-event i {
+            margin-right: 6px;
+        }
+
+        .featured-badge {
+            background-color: var(--warning-bg);
+            color: var(--warning);
+        }
+
+        .new-badge {
+            background-color: var(--success-bg);
+            color: var(--success);
+        }
+
+        .sold-out-badge {
+            background-color: var(--destructive-bg);
+            color: var(--destructive);
+        }
+    </style>
+</head>
+<body>
+    <!-- iOS Status Bar -->
+    <div class="status-bar">
+        <div>9:41</div>
+        <div>
+            <span class="mr-2"><i class="fas fa-signal"></i></span>
+            <span class="mr-2"><i class="fas fa-wifi"></i></span>
+            <span><i class="fas fa-battery-full"></i></span>
+        </div>
+    </div>
+    
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+        <div class="brand-header">
+            <img src="/public/img/sanicle_logo.svg" alt="Sanicle" class="brand-logo" style="height: 24px;">
+            <div class="nav-title">Health Events</div>
+        </div>
+        <div class="nav-actions">
+            <i class="fas fa-bell nav-icon"></i>
+            <i class="fas fa-filter nav-icon"></i>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Admin Section (visible only to HR) -->
+        <div class="admin-section">
+            <div class="admin-title">
+                <i class="fas fa-crown"></i> HR Admin Tools
+            </div>
+            <button class="btn-add-event">
+                <i class="fas fa-plus-circle"></i> Create New Health Event
+            </button>
+            <div class="text-xs text-muted mt-2 text-center">
+                Event insights: 78% participation rate in last month's events
+            </div>
+        </div>
+        
+        <!-- Events Filter -->
+        <div class="events-filter">
+            <div class="filter-option active">Upcoming</div>
+            <div class="filter-option">Registered</div>
+            <div class="filter-option">Past</div>
+        </div>
+        
+        <!-- Category Tabs -->
+        <div class="category-tabs">
+            <div class="category-tab active">All Events</div>
+            <div class="category-tab">Webinars</div>
+            <div class="category-tab">Workshops</div>
+            <div class="category-tab">Menstrual Health</div>
+            <div class="category-tab">Menopause</div>
+            <div class="category-tab">Wellness</div>
+        </div>
+        
+        <!-- Featured Event -->
+        <div class="card">
+            <h2 class="card-title mb-3">Featured Event</h2>
+            <div class="event-card" style="margin-bottom: 0">
+                <div class="event-image" style="background-image: url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80')">
+                    <div class="event-badge featured-badge">Featured</div>
+                    <div class="event-date">Apr 25, 2025 • 2:00 PM</div>
+                </div>
+                <div class="event-content">
+                    <div class="event-title">Understanding Perimenopause: What Every Woman Should Know</div>
+                    <div class="event-meta">
+                        <div class="event-host">
+                            <i class="fas fa-user-md mr-1"></i> Dr. Sarah Chen
+                        </div>
+                        <div class="event-location">
+                            <i class="fas fa-video mr-1"></i> Live Webinar
+                        </div>
+                    </div>
+                    <div class="event-description">
+                        Join leading women's health expert Dr. Sarah Chen for a comprehensive discussion on perimenopause, symptoms, and workplace strategies.
+                    </div>
+                    <div class="event-footer">
+                        <div class="event-attendees">
+                            <div class="attendee-avatar">
+                                <img src="https://randomuser.me/api/portraits/women/12.jpg" alt="Attendee">
+                            </div>
+                            <div class="attendee-avatar">
+                                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Attendee">
+                            </div>
+                            <div class="attendee-avatar">
+                                <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Attendee">
+                            </div>
+                            <div class="attendee-count">+42 registered</div>
+                        </div>
+                        <button class="btn btn-primary btn-sm">Register Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Upcoming Events -->
+        <h2 class="card-title mb-3">Upcoming Events</h2>
+        
+        <div class="event-card">
+            <div class="event-image" style="background-image: url('https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80')">
+                <div class="event-badge new-badge">New</div>
+                <div class="event-date">Apr 18, 2025 • 12:00 PM</div>
+            </div>
+            <div class="event-content">
+                <div class="event-title">Lunch & Learn: Nutrition for Menstrual Health</div>
+                <div class="event-meta">
+                    <div class="event-host">
+                        <i class="fas fa-user mr-1"></i> Emma Rodriguez, RD
+                    </div>
+                    <div class="event-location">
+                        <i class="fas fa-map-marker-alt mr-1"></i> Conference Room A
+                    </div>
+                </div>
+                <div class="event-description">
+                    Learn about foods that can help manage menstrual symptoms and improve overall cycle health. Lunch will be provided.
+                </div>
+                <div class="event-footer">
+                    <div class="event-attendees">
+                        <div class="attendee-avatar">
+                            <img src="https://randomuser.me/api/portraits/women/22.jpg" alt="Attendee">
+                        </div>
+                        <div class="attendee-avatar">
+                            <img src="https://randomuser.me/api/portraits/women/23.jpg" alt="Attendee">
+                        </div>
+                        <div class="attendee-count">+18 registered</div>
+                    </div>
+                    <button class="btn btn-primary btn-sm">Register Now</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="event-card">
+            <div class="event-image" style="background-image: url('https://images.unsplash.com/photo-1599058917765-a780eda07a3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80')">
+                <div class="event-badge sold-out-badge">Limited Spots</div>
+                <div class="event-date">May 2, 2025 • 3:00 PM</div>
+            </div>
+            <div class="event-content">
+                <div class="event-title">Mindfulness Workshop for Hormonal Balance</div>
+                <div class="event-meta">
+                    <div class="event-host">
+                        <i class="fas fa-user mr-1"></i> Lisa Park, Wellness Coach
+                    </div>
+                    <div class="event-location">
+                        <i class="fas fa-map-marker-alt mr-1"></i> Wellness Room
+                    </div>
+                </div>
+                <div class="event-description">
+                    Practice guided meditation and breathing techniques specifically designed to help manage hormonal fluctuations.
+                </div>
+                <div class="event-footer">
+                    <div class="event-attendees">
+                        <div class="attendee-avatar">
+                            <img src="https://randomuser.me/api/portraits/women/32.jpg" alt="Attendee">
+                        </div>
+                        <div class="attendee-avatar">
+                            <img src="https://randomuser.me/api/portraits/women/45.jpg" alt="Attendee">
+                        </div>
+                        <div class="attendee-count">+13 registered</div>
+                    </div>
+                    <button class="btn btn-secondary btn-sm">
+                        <i class="fas fa-check mr-1"></i> Registered
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="event-card">
+            <div class="event-image" style="background-image: url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80')">
+                <div class="event-date">May 10, 2025 • 10:00 AM</div>
+            </div>
+            <div class="event-content">
+                <div class="event-title">Panel Discussion: Navigating Workplace During Menopause</div>
+                <div class="event-meta">
+                    <div class="event-host">
+                        <i class="fas fa-users mr-1"></i> Women's Network
+                    </div>
+                    <div class="event-location">
+                        <i class="fas fa-video mr-1"></i> Live Webinar
+                    </div>
+                </div>
+                <div class="event-description">
+                    Hear from leaders and experts about strategies for managing menopausal symptoms while excelling in your career.
+                </div>
+                <div class="event-footer">
+                    <div class="event-attendees">
+                        <div class="attendee-avatar">
+                            <img src="https://randomuser.me/api/portraits/women/67.jpg" alt="Attendee">
+                        </div>
+                        <div class="attendee-avatar">
+                            <img src="https://randomuser.me/api/portraits/women/68.jpg" alt="Attendee">
+                        </div>
+                        <div class="attendee-count">+26 registered</div>
+                    </div>
+                    <button class="btn btn-primary btn-sm">Register Now</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Past Events -->
+        <h2 class="card-title mb-3 mt-6">Recent Past Events</h2>
+        
+        <div class="grid grid-cols-2 gap-3">
+            <div class="bg-white rounded-lg overflow-hidden shadow-sm">
+                <div style="height: 80px; background-image: url('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80'); background-size: cover; background-position: center;"></div>
+                <div class="p-2">
+                    <div class="text-xs font-medium">Yoga for Menstrual Pain</div>
+                    <div class="text-xs text-muted mt-1">Apr 5 • 55 attendees</div>
+                    <div class="text-center mt-2">
+                        <button class="text-xs text-primary font-medium">Watch Recording</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg overflow-hidden shadow-sm">
+                <div style="height: 80px; background-image: url('https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80'); background-size: cover; background-position: center;"></div>
+                <div class="p-2">
+                    <div class="text-xs font-medium">HR Policy Q&A Session</div>
+                    <div class="text-xs text-muted mt-1">Mar 28 • 64 attendees</div>
+                    <div class="text-center mt-2">
+                        <button class="text-xs text-primary font-medium">View Summary</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-home"></i></div>
+            <div>Home</div>
+        </div>
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-calendar"></i></div>
+            <div>Calendar</div>
+        </div>
+        <div class="tab-item active">
+            <div class="tab-icon"><i class="fas fa-calendar-alt"></i></div>
+            <div>Events</div>
+        </div>
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-comment-dots"></i></div>
+            <div>Assistant</div>
+        </div>
+        <div class="tab-item">
+            <div class="tab-icon"><i class="fas fa-user"></i></div>
+            <div>Profile</div>
+        </div>
+    </div>
+</body>
+</html> 
