@@ -25,7 +25,7 @@ A revolutionary mobile-first web application that transforms workplace wellness 
 
 <br/>
 
-[![🚀 Visit Live Demo 🚀](https://img.shields.io/badge/%F0%9F%9A%80%20Visit%20Live%20Demo%20%F0%9F%9A%80-FF5F85?style=for-the-badge&logoColor=white)](https://sanicle-ai-mobile.vercel.app/)
+[![🚀 Visit Live Site 🚀](https://gradient-svg-generator.vercel.app/api/svg?text=%F0%9F%9A%80Visit%20Live%20Site%F0%9F%9A%80&color=000000&height=60&gradientType=radial&duration=6s&color0=ffffff&template=pride-rainbow)](https://chanmeng666.github.io/sanicle-ai-mobile/)
 
 <br/>
 
