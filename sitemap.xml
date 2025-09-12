@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+    <!-- Main Demo Page -->
+    <url>
+        <loc>https://chanmeng666.github.io/sanicle-ai-mobile/</loc>
+        <lastmod>2024-12-19</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+    </url>
+
+    <!-- Employee Dashboard -->
+    <url>
+        <loc>https://chanmeng666.github.io/sanicle-ai-mobile/app/pages/employee-dashboard.html</loc>
+        <lastmod>2024-12-19</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <!-- AI Health Assistant -->
+    <url>
+        <loc>https://chanmeng666.github.io/sanicle-ai-mobile/app/pages/ai-assistant.html</loc>
+        <lastmod>2024-12-19</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.9</priority>
+    </url>
+
+    <!-- Period Calendar -->
+    <url>
+        <loc>https://chanmeng666.github.io/sanicle-ai-mobile/app/pages/period-calendar.html</loc>
+        <lastmod>2024-12-19</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- HR Dashboard -->
+    <url>
+        <loc>https://chanmeng666.github.io/sanicle-ai-mobile/app/pages/hr-dashboard.html</loc>
+        <lastmod>2024-12-19</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+
+    <!-- Work Calendar -->
+    <url>
+        <loc>https://chanmeng666.github.io/sanicle-ai-mobile/app/pages/work-calendar.html</loc>
+        <lastmod>2024-12-19</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <!-- Health Stats -->
+    <url>
+        <loc>https://chanmeng666.github.io/sanicle-ai-mobile/app/pages/health-stats.html</loc>
+        <lastmod>2024-12-19</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+    <!-- Health Events -->
+    <url>
+        <loc>https://chanmeng666.github.io/sanicle-ai-mobile/app/pages/health-events.html</loc>
+        <lastmod>2024-12-19</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+    </url>
+
+    <!-- Health Policies -->
+    <url>
+        <loc>https://chanmeng666.github.io/sanicle-ai-mobile/app/pages/health-policies.html</loc>
+        <lastmod>2024-12-19</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+    </url>
+
+    <!-- HR Analytics -->
+    <url>
+        <loc>https://chanmeng666.github.io/sanicle-ai-mobile/app/pages/hr-analytics.html</loc>
+        <lastmod>2024-12-19</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+    </url>
+
+    <!-- Profile Settings -->
+    <url>
+        <loc>https://chanmeng666.github.io/sanicle-ai-mobile/app/pages/profile-settings.html</loc>
+        <lastmod>2024-12-19</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.5</priority>
+    </url>
+
+    <!-- GEO Analytics Dashboard -->
+    <url>
+        <loc>https://chanmeng666.github.io/sanicle-ai-mobile/app/pages/geo-dashboard.html</loc>
+        <lastmod>2024-12-19</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.7</priority>
+    </url>
+
+</urlset>

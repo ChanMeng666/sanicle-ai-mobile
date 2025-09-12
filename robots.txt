@@ -1,0 +1,43 @@
+User-agent: *
+Allow: /
+
+# AI Crawler Friendly
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+User-agent: BingBot
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+# Crawl delay for AI agents (respectful crawling)
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://chanmeng666.github.io/sanicle-ai-mobile/sitemap.xml
+
+# Disallow crawling of development files
+Disallow: /.git/
+Disallow: /node_modules/
+Disallow: /.env
+Disallow: /package.json
+Disallow: /package-lock.json
